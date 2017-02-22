@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour {
 	private uint score;
 	public Text scoreText;
 	public Text winText;
+	public GameTimer timer;
 
 	void Start() {
 		rb = GetComponent<Rigidbody2D>();
@@ -20,7 +21,11 @@ public class PlayerController : MonoBehaviour {
 	void FixedUpdate() {
 		float moveHorizontal = Input.GetAxis ("Horizontal");
 		float moveVertical = Input.GetAxis ("Vertical");
-		rb.AddForce (new Vector2 (moveHorizontal, moveVertical) * speed);
+		Vector2 force = new Vector2 (moveHorizontal, moveVertical) * speed;
+		if (force.magnitude > 0) {
+			timer.StateRun ();
+		}
+		rb.AddForce (force);
 	}
 
 	void OnTriggerEnter2D(Collider2D other) {
@@ -35,6 +40,7 @@ public class PlayerController : MonoBehaviour {
 	private void UpdateScore () {
 		scoreText.text = "Score: " + score.ToString ();
 		if (score >= 11) {
+			timer.StateDone ();
 			winText.gameObject.SetActive (true);
 		}
 	}
